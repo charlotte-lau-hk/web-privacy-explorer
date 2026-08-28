@@ -10,6 +10,11 @@ Built by **Charlotte Lau** for ICT / network security.
 
 👉 https://charlotte-lau-hk.github.io/web-privacy-explorer/
 
+Simplified version  
+[Example prompt - Initial result](https://charlotte-lau-hk.github.io/web-privacy-explorer/simplified-example-initial-result.html)  
+[Example prompt - After follow-up prompt](https://charlotte-lau-hk.github.io/web-privacy-explorer/simplified-example-after-followup-prompt.html)  
+Reference: [Example prompt](https://edtools.hk/guide/example-2)
+
 ## Two scenarios (tabs)
 
 - **🏠 Home / general** — Device → ISP → VPN → Website
