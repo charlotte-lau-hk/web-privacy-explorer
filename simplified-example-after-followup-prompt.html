@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Permissions-Policy" content="unload=()">
   <title>網絡安全與加密教學工具 (Network Security & Encryption)</title>
   <style>
     :root {
@@ -165,55 +166,3 @@
       border-left: 4px solid var(--accent);
       padding: 8px 12px;
       margin-top: 8px;
-      font-size: 0.95rem;
-      font-weight: 500;
-    }
-
-    /* Visibility Details & Guessing Game */
-    .bottom-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 12px;
-    }
-
-    @media (min-width: 768px) {
-      .bottom-grid {
-        grid-template-columns: 1fr 1fr;
-      }
-    }
-
-    .info-card {
-      background: var(--card-bg);
-      padding: 12px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    .info-card h2 {
-      font-size: 1.1rem;
-      margin-bottom: 8px;
-      color: var(--primary);
-      border-bottom: 2px solid var(--bg-color);
-      padding-bottom: 4px;
-    }
-
-    .visibility-list {
-      list-style: none;
-      font-size: 0.9rem;
-    }
-
-    .visibility-list li {
-      margin-bottom: 6px;
-      padding-bottom: 6px;
-      border-bottom: 1px solid #eee;
-    }
-
-    /* Interactive Guess Section */
-    .quiz-box {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .btn {
-      background-color: var(--accent);
