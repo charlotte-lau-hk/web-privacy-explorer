@@ -53,6 +53,12 @@
       border-radius: 8px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .switches-wrapper {
+      display: flex;
       flex-wrap: wrap;
       justify-content: space-around;
       gap: 10px;
@@ -106,6 +112,39 @@
 
     input:checked + .slider:before {
       transform: translateX(24px);
+    }
+
+    /* Dedicated Clarification Callouts per Switch */
+    .switch-clarifications {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .clarification-item {
+      font-size: 0.85rem;
+      padding: 8px 10px;
+      border-radius: 6px;
+      display: none; /* Controlled via JS */
+      border-left: 4px solid;
+    }
+
+    .clarification-item.https {
+      background-color: #e8f8f5;
+      color: #117a65;
+      border-color: #1abc9c;
+    }
+
+    .clarification-item.vpn {
+      background-color: #f4ecf7;
+      color: #6c3483;
+      border-color: #8e44ad;
+    }
+
+    .clarification-item.login {
+      background-color: #fef9e7;
+      color: #7d6608;
+      border-color: #f1c40f;
     }
 
     /* Diagram Section */
@@ -220,17 +259,6 @@
       border: 1px solid #ddd;
       display: none;
     }
-
-    .warning-note {
-      margin-top: 8px;
-      font-size: 0.85rem;
-      color: #c0392b;
-      background-color: #fdf2e9;
-      padding: 6px 8px;
-      border-radius: 4px;
-      border: 1px solid #fadbd8;
-      display: none;
-    }
   </style>
 </head>
 <body>
@@ -238,37 +266,49 @@
   <h1>網絡傳輸與身分識別模擬器 (Network & Privacy Simulator)</h1>
 
   <div class="container">
-    <!-- 功能（一）：三個開關 -->
     <div class="controls-card">
-      <div class="control-group">
-        <span>HTTP</span>
-        <label class="switch">
-          <input type="checkbox" id="protocolToggle" onchange="updateSimulation()">
-          <span class="slider"></span>
-        </label>
-        <span>HTTPS (加密)</span>
+      <div class="switches-wrapper">
+        <div class="control-group">
+          <span>HTTP</span>
+          <label class="switch">
+            <input type="checkbox" id="protocolToggle" onchange="updateSimulation()">
+            <span class="slider"></span>
+          </label>
+          <span>HTTPS (加密)</span>
+        </div>
+
+        <div class="control-group">
+          <span>VPN 關閉</span>
+          <label class="switch">
+            <input type="checkbox" id="vpnToggle" onchange="updateSimulation()">
+            <span class="slider"></span>
+          </label>
+          <span>VPN 開啟</span>
+        </div>
+
+        <div class="control-group">
+          <span>未登入</span>
+          <label class="switch">
+            <input type="checkbox" id="loginToggle" onchange="updateSimulation()">
+            <span class="slider"></span>
+          </label>
+          <span>已登入</span>
+        </div>
       </div>
 
-      <div class="control-group">
-        <span>VPN 關閉</span>
-        <label class="switch">
-          <input type="checkbox" id="vpnToggle" onchange="updateSimulation()">
-          <span class="slider"></span>
-        </label>
-        <span>VPN 開啟</span>
-      </div>
-
-      <div class="control-group">
-        <span>未登入</span>
-        <label class="switch">
-          <input type="checkbox" id="loginToggle" onchange="updateSimulation()">
-          <span class="slider"></span>
-        </label>
-        <span>已登入</span>
+      <div class="switch-clarifications">
+        <div class="clarification-item https" id="httpsNote">
+          🔒 <strong>觀念釐清 (HTTPS)：</strong> HTTPS 加密了「傳輸內容與密碼」，讓中途竊聽者無法得知內容；但網絡供應商 (ISP) 依然看得見你連線的目的地 IP 位址。
+        </div>
+        <div class="clarification-item vpn" id="vpnNote">
+          🛡️ <strong>觀念釐清 (VPN)：</strong> 開啟 VPN 會把傳輸包裹加密並送往 VPN 伺服器，能對 ISP 隱藏真實目的地 IP；但「開 VPN ≠ 完全匿名」，若網站使用 Cookie 或你已登入，網站仍能識別你。
+        </div>
+        <div class="clarification-item login" id="loginNote">
+          👤 <strong>觀念釐清 (已登入)：</strong> 登入帳號後，目的地網站會直接透過 Session / Cookie / 帳號身分記錄你的操作，任何 IP 隱藏技術（如 VPN）都無法防止網站認出你。
+        </div>
       </div>
     </div>
 
-    <!-- 功能（二）：即時 SVG 路由示意圖 -->
     <div class="diagram-card">
       <svg class="svg-container" viewBox="0 0 800 200" xmlns="http://www.w3.org/2000/svg">
         <g transform="translate(50, 80)">
@@ -308,183 +348,3 @@
         <path id="link3" d="M 540 105 L 670 105" stroke="#e74c3c" stroke-width="4"/>
         <text id="link3Tag" x="605" y="95" font-size="11" font-weight="bold" text-anchor="middle" fill="#e74c3c">未加密</text>
       </svg>
-
-      <div class="status-banner" id="statusBanner">載入中...</div>
-    </div>
-
-    <div class="bottom-grid">
-      <!-- 路上「誰看得見什麼」 -->
-      <div class="info-card">
-        <h2>路上「誰看得見什麼」(Visibility)</h2>
-        <ul class="visibility-list" id="visibilityList"></ul>
-      </div>
-
-      <!-- 功能（三）：這個網站認得出你嗎？ -->
-      <div class="info-card">
-        <h2>「這個網站認得出你嗎？」 (Identification)</h2>
-        <div class="quiz-box">
-          <p>請根據目前的設定猜猜看：<strong>目的地網站能否識別出你的真實身分？</strong></p>
-          <div class="guess-options">
-            <button class="guess-btn" id="btnGuessYes" onclick="selectGuess(true)">認得出 ✅</button>
-            <button class="guess-btn" id="btnGuessNo" onclick="selectGuess(false)">認不出 ❌</button>
-          </div>
-          <button class="btn" onclick="checkAnswer()">核對答案 (Check Answer)</button>
-          
-          <div class="answer-box" id="answerBox">
-            <p id="answerResult" style="font-weight: bold; margin-bottom: 4px;"></p>
-            <p id="answerExplanation"></p>
-          </div>
-
-          <div class="warning-note" id="vpnWarning">
-            ⚠️ <strong>觀念釐清：</strong> 開啟 VPN 只能隱藏你的真實 IP 位址（192.0.2.45）。如果你已登入帳號，或網站存有 Cookie / 瀏覽器指紋，網站依然能準確識別你的身分！「開 VPN ≠ 完全匿名」。
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    let userGuess = null;
-
-    function selectGuess(val) {
-      userGuess = val;
-      document.getElementById('btnGuessYes').classList.toggle('selected', val === true);
-      document.getElementById('btnGuessNo').classList.toggle('selected', val === false);
-      document.getElementById('answerBox').style.display = 'none';
-    }
-
-    function updateSimulation() {
-      const isHttps = document.getElementById('protocolToggle').checked;
-      const isVpn = document.getElementById('vpnToggle').checked;
-      const isLoggedIn = document.getElementById('loginToggle').checked;
-
-      // 重置猜測狀態
-      userGuess = null;
-      document.getElementById('btnGuessYes').classList.remove('selected');
-      document.getElementById('btnGuessNo').classList.remove('selected');
-      document.getElementById('answerBox').style.display = 'none';
-
-      // 取得 SVG 元素
-      const link1 = document.getElementById('link1');
-      const link2 = document.getElementById('link2');
-      const link3 = document.getElementById('link3');
-      const link1Tag = document.getElementById('link1Tag');
-      const link2Tag = document.getElementById('link2Tag');
-      const link3Tag = document.getElementById('link3Tag');
-      const vpnBox = document.getElementById('vpnBox');
-
-      const cUnencrypted = '#e74c3c';
-      const cEncrypted = '#27ae60';
-      const cHidden = '#8e44ad';
-
-      if (!isVpn) {
-        vpnBox.style.opacity = '0.3';
-        if (!isHttps) {
-          setLinkStyle(link1, link1Tag, cUnencrypted, "未加密");
-          setLinkStyle(link2, link2Tag, cUnencrypted, "未加密");
-          setLinkStyle(link3, link3Tag, cUnencrypted, "未加密");
-        } else {
-          setLinkStyle(link1, link1Tag, cEncrypted, "內容已加密");
-          setLinkStyle(link2, link2Tag, cEncrypted, "內容已加密");
-          setLinkStyle(link3, link3Tag, cEncrypted, "內容已加密");
-        }
-      } else {
-        vpnBox.style.opacity = '1.0';
-        setLinkStyle(link1, link1Tag, cHidden, "連目的地都隱藏");
-        if (!isHttps) {
-          setLinkStyle(link2, link2Tag, cUnencrypted, "未加密");
-          setLinkStyle(link3, link3Tag, cUnencrypted, "未加密");
-        } else {
-          setLinkStyle(link2, link2Tag, cEncrypted, "內容已加密");
-          setLinkStyle(link3, link3Tag, cEncrypted, "內容已加密");
-        }
-      }
-
-      // 更新狀態說明
-      const banner = document.getElementById('statusBanner');
-      if (!isHttps && !isVpn) {
-        banner.innerText = "💡 目前為 HTTP 未加密連線，且未開啟 VPN：網絡路上所有人都能看見你瀏覽的完整內容與目的地！";
-      } else if (isHttps && !isVpn) {
-        banner.innerText = "💡 目前為 HTTPS 加密連線：網絡供應商知道你去哪個網站（203.0.113.88），但偷聽者看不見傳輸的密碼與內容。";
-      } else if (!isHttps && isVpn) {
-        banner.innerText = "💡 目前已開啟 VPN，但目的地網站使用 HTTP：網絡供應商只知道你連去 VPN，但 VPN 伺服器之後的路段內容完全沒加密！";
-      } else {
-        banner.innerText = "💡 目前開啟 VPN 且使用 HTTPS：雙重保護！網絡供應商看不到目的地，VPN 伺服器也看不到傳輸的內容。";
-      }
-
-      // 更新「誰看得見什麼」清單
-      const list = document.getElementById('visibilityList');
-      list.innerHTML = '';
-
-      let ispText = isVpn 
-        ? "只看得見你連線至 <strong>VPN 伺服器 (198.51.100.1)</strong>，看不見目的地網站與傳輸內容。" 
-        : (isHttps ? "看得見你想連去 <strong>目的地網站 (203.0.113.88)</strong>，但看不見傳輸的詳細內容/密碼。" 
-                   : "看得見你的<strong>真實 IP (192.0.2.45)</strong>、<strong>目的地網站 (203.0.113.88)</strong> 及<strong>所有傳輸內容與密碼</strong>！");
-      addListItem(list, "網絡供應商 (ISP)", ispText);
-
-      let vpnText = !isVpn 
-        ? "未經過 VPN 伺服器。" 
-        : (isHttps ? "看得見你的真實 IP 與目的地網站 (203.0.113.88)，但<strong>看不見</strong> HTTPS 加密的內容。" 
-                   : "看得見你的真實 IP、目的地網站，以及 <strong>HTTP 未加密的完整內容</strong>！");
-      addListItem(list, "VPN 伺服器", vpnText);
-
-      const sourceIp = isVpn ? "VPN 的 IP (198.51.100.1)" : "你的真實 IP (192.0.2.45)";
-      let targetText = isLoggedIn 
-        ? `看見請求來自 ${sourceIp}。因為你<strong>已登入</strong>（或有 Cookie），網站能直接識別你是哪位用戶！` 
-        : `看見請求來自 ${sourceIp}。未登入狀態下，網站主要以該 IP 識別訪客。`;
-      addListItem(list, "目的地網站", targetText);
-
-      // VPN 觀念釐清顯示切換
-      const vpnWarning = document.getElementById('vpnWarning');
-      vpnWarning.style.display = isVpn ? 'block' : 'none';
-    }
-
-    function setLinkStyle(lineElem, textElem, color, text) {
-      lineElem.setAttribute('stroke', color);
-      textElem.setAttribute('fill', color);
-      textElem.textContent = text;
-    }
-
-    function addListItem(ulElement, title, htmlContent) {
-      const li = document.createElement('li');
-      li.innerHTML = `<strong>${title}：</strong>${htmlContent}`;
-      ulElement.appendChild(li);
-    }
-
-    function checkAnswer() {
-      if (userGuess === null) {
-        alert("請先選擇「認得出」或「認不出」！");
-        return;
-      }
-
-      const isLoggedIn = document.getElementById('loginToggle').checked;
-      const isVpn = document.getElementById('vpnToggle').checked;
-      const canIdentify = isLoggedIn || (!isVpn);
-
-      const resultBox = document.getElementById('answerBox');
-      const resultTitle = document.getElementById('answerResult');
-      const resultExp = document.getElementById('answerExplanation');
-
-      resultBox.style.display = 'block';
-
-      if (userGuess === canIdentify) {
-        resultTitle.textContent = "🎯 答對了！";
-        resultTitle.style.color = "#27ae60";
-      } else {
-        resultTitle.textContent = "❌ 答錯了，再想想看！";
-        resultTitle.style.color = "#e74c3c";
-      }
-
-      if (isLoggedIn) {
-        resultExp.textContent = "解釋：因為你「已登入」帳號，網站可直接透過 Session / Cookie / 帳號資料確認你的身分，就算開啟 VPN 也無法隱藏身分！";
-      } else if (!isVpn) {
-        resultExp.textContent = "解釋：你未開啟 VPN，目的地網站可以直接記錄並讀取你的真實 IP 位址（192.0.2.45），從而識別或追蹤你。";
-      } else {
-        resultExp.textContent = "解釋：你未登入帳號，且開啟了 VPN。目的地網站只能看到 VPN 的 IP (198.51.100.1)，無法直接知道你的真實身分。";
-      }
-    }
-
-    window.onload = updateSimulation;
-  </script>
-</body>
-</html>
