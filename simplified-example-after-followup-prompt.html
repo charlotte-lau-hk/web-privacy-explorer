@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>網絡安全與加密教學工具 (Network Security & Encryption)</title>
+  <style>
+    :root {
+      --bg-color: #f4f7f6;
+      --card-bg: #ffffff;
+      --primary: #2c3e50;
+      --accent: #2980b9;
+      --text: #333333;
+      --border: #cccccc;
+      --unencrypted: #e74c3c;
+      --encrypted: #27ae60;
+      --hidden: #8e44ad;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 12px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 1.4rem;
+      text-align: center;
+      margin-bottom: 12px;
+      color: var(--primary);
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Controls Section */
+    .controls-card {
+      background: var(--card-bg);
+      padding: 12px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      gap: 10px;
+    }
+
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: bold;
+      font-size: 0.95rem;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 26px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #ccc;
+      transition: .3s;
+      border-radius: 26px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: var(--accent);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(24px);
+    }
+
+    /* Diagram Section */
+    .diagram-card {
+      background: var(--card-bg);
+      padding: 12px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .svg-container {
+      width: 100%;
+      height: auto;
+    }
+
+    .status-banner {
+      background-color: #eef6fb;
+      border-left: 4px solid var(--accent);
+      padding: 8px 12px;
+      margin-top: 8px;
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    /* Visibility Details & Guessing Game */
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    @media (min-width: 768px) {
+      .bottom-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .info-card {
+      background: var(--card-bg);
+      padding: 12px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .info-card h2 {
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+      color: var(--primary);
+      border-bottom: 2px solid var(--bg-color);
+      padding-bottom: 4px;
+    }
+
+    .visibility-list {
+      list-style: none;
+      font-size: 0.9rem;
+    }
+
+    .visibility-list li {
+      margin-bottom: 6px;
+      padding-bottom: 6px;
+      border-bottom: 1px stroke #eee;
+    }
+
+    /* Interactive Guess Section */
+    .quiz-box {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .btn {
+      background-color: var(--accent);
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      font-size: 0.95rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn:hover {
+      background-color: #1a5a80;
+    }
+
+    .guess-options {
+      display: flex;
+      gap: 10px;
+    }
+
+    .guess-btn {
+      flex: 1;
+      background-color: #e0e0e0;
+      color: #333;
+      border: 2px solid #ccc;
+      padding: 8px;
+      font-weight: bold;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .guess-btn.selected {
+      border-color: var(--accent);
+      background-color: #d0e7f7;
+    }
+
+    .answer-box {
+      margin-top: 8px;
+      padding: 10px;
+      border-radius: 4px;
+      background-color: #f9f9f9;
+      border: 1px solid #ddd;
+      display: none;
+    }
+
+    .warning-note {
+      margin-top: 8px;
+      font-size: 0.85rem;
+      color: #c0392b;
+      background-color: #fdf2e9;
+      padding: 6px 8px;
+      border-radius: 4px;
+      border: 1px solid #fadbd8;
+      display: none; /* Default hidden */
+    }
+  </style>
+</head>
+<body>
+
+  <h1>網絡傳輸與身分識別模擬器 (Network & Privacy Simulator)</h1>
+
+  <div class="container">
+    <div class="controls-card">
+      <div class="control-group">
+        <span>HTTP</span>
+        <label class="switch">
+          <input type="checkbox" id="protocolToggle" onchange="updateSimulation()">
+          <span class="slider"></span>
+        </label>
+        <span>HTTPS (加密)</span>
+      </div>
+
+      <div class="control-group">
+        <span>VPN 關閉</span>
+        <label class="switch">
+          <input type="checkbox" id="vpnToggle" onchange="updateSimulation()">
+          <span class="slider"></span>
+        </label>
+        <span>VPN 開啟</span>
+      </div>
+
+      <div class="control-group">
+        <span>未登入</span>
+        <label class="switch">
+          <input type="checkbox" id="loginToggle" onchange="updateSimulation()">
+          <span class="slider"></span>
+        </label>
+        <span>已登入</span>
+      </div>
+    </div>
+
+    <div class="diagram-card">
+      <svg class="svg-container" viewBox="0 0 800 200" xmlns="http://www.w3.org/2000/svg">
+        <g transform="translate(50, 80)">
+          <rect x="-10" y="-10" width="70" height="70" rx="8" fill="#e1f5fe" stroke="#0288d1" stroke-width="2"/>
+          <text x="25" y="20" font-size="28" text-anchor="middle">💻</text>
+          <text x="25" y="45" font-size="12" font-weight="bold" text-anchor="middle">你的裝置</text>
+          <text x="25" y="75" font-size="10" fill="#555" text-anchor="middle" id="clientIpText">192.0.2.45</text>
+        </g>
+
+        <g id="vpnNodeGroup" transform="translate(260, 80)">
+          <rect x="-10" y="-10" width="80" height="70" rx="8" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2" id="vpnBox"/>
+          <text x="30" y="20" font-size="28" text-anchor="middle">🛡️</text>
+          <text x="30" y="45" font-size="12" font-weight="bold" text-anchor="middle">VPN 伺服器</text>
+          <text x="30" y="75" font-size="10" fill="#555" text-anchor="middle">198.51.100.1</text>
+        </g>
+
+        <g transform="translate(470, 80)">
+          <rect x="-10" y="-10" width="80" height="70" rx="8" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/>
+          <text x="30" y="20" font-size="28" text-anchor="middle">🌐</text>
+          <text x="30" y="45" font-size="12" font-weight="bold" text-anchor="middle">網絡供應商</text>
+          <text x="30" y="60" font-size="10" fill="#777" text-anchor="middle">(ISP)</text>
+        </g>
+
+        <g transform="translate(680, 80)">
+          <rect x="-10" y="-10" width="80" height="70" rx="8" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+          <text x="30" y="20" font-size="28" text-anchor="middle">🏢</text>
+          <text x="30" y="45" font-size="12" font-weight="bold" text-anchor="middle">目的地網站</text>
+          <text x="30" y="75" font-size="10" fill="#555" text-anchor="middle">203.0.113.88</text>
+        </g>
+
+        <path id="link1" d="M 110
